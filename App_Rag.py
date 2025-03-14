@@ -11,8 +11,8 @@ from langchain_core.prompts import ChatPromptTemplate
 from docx import Document
 from tempfile import NamedTemporaryFile
 
-# Set API key
-os.environ["GROQ_API_KEY"] = "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"  # Replace with your actual key
+
+os.environ["GROQ_API_KEY"] = "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"  
 
 def ocr_pdf(file_path):
     """Extracts text using OCR from image-based PDFs."""
