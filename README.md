@@ -6,4 +6,4 @@ The app makes use of tesseract for OCR (to extract text from the pages), langcha
 [RAG](https://wd4yagdaz9kqzmpjrfiguj.streamlit.app/) 
 
 ## Streamlit UI
-<img src = "ui.png">
+<img src = "UI.png">
