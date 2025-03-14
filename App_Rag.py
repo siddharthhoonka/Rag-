@@ -17,7 +17,7 @@ st.set_page_config(page_title="RAG-based Document Query System", layout="wide")
 # Set the Groq API key
 os.environ["GROQ_API_KEY"] = "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"
 
-# Custom CSS for enhanced dark theme styling with smooth animations and custom fonts
+# Custom CSS for a fresh light theme styling with smooth animations and custom fonts
 st.markdown("""
     <style>
         /* Import Google Fonts */
@@ -25,49 +25,48 @@ st.markdown("""
 
         /* Global styles */
         body {
-            background: linear-gradient(135deg, #121212, #1e1e1e);
+            background: linear-gradient(135deg, #ffffff, #f0f0f0);
             font-family: 'Roboto', sans-serif;
-            color: #e0e0e0;
+            color: #333333;
         }
 
         /* Main container styling */
         .stApp {
-            background-color: #1e1e1e;
+            background-color: #ffffff;
             padding: 2rem;
             border-radius: 16px;
-            box-shadow: 0px 6px 18px rgba(0,0,0,0.7);
+            box-shadow: 0px 6px 18px rgba(0,0,0,0.1);
             margin-top: 2rem;
             width: 100%;
         }
 
         /* Title Styling */
         .title {
-            color: #BB86FC;
+            color: #3a7bd5;
             font-weight: 700;
             text-align: center;
             font-size: 3rem;
             margin-bottom: 2rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
 
         /* File uploader area styling */
         .css-1d391kg, .css-1cpxqw2, .stFileUploader {
-            background-color: #2c2c2c;
-            border: 2px dashed #BB86FC;
+            background-color: #f9f9f9;
+            border: 2px dashed #3a7bd5;
             border-radius: 12px;
             padding: 2rem;
             text-align: center;
             transition: background 0.3s ease, transform 0.3s ease;
         }
         .css-1d391kg:hover, .css-1cpxqw2:hover, .stFileUploader:hover {
-            background-color: #3a3a3a;
+            background-color: #f1f1f1;
             transform: scale(1.02);
         }
 
         /* Button Styling */
         button {
-            background-color: #BB86FC;
-            color: #121212;
+            background-color: #3a7bd5;
+            color: #ffffff;
             font-weight: 600;
             border-radius: 10px;
             padding: 14px 28px;
@@ -78,15 +77,15 @@ st.markdown("""
             margin-top: 1rem;
         }
         button:hover {
-            background-color: #9b67d2;
+            background-color: #5a9bd5;
             transform: translateY(-2px);
         }
 
         /* Text Input Styling */
         input[type="text"], input, textarea {
-            background-color: #2c2c2c !important;
-            border: 1px solid #444;
-            color: #e0e0e0 !important;
+            background-color: #ffffff !important;
+            border: 1px solid #ccc;
+            color: #333333 !important;
             padding: 0.75rem;
             border-radius: 8px;
             width: 100%;
@@ -96,19 +95,19 @@ st.markdown("""
 
         /* Response Styling */
         .response-box {
-            background-color: #2c2c2c;
+            background-color: #f9f9f9;
             padding: 1rem;
             border-radius: 8px;
-            border-left: 5px solid #BB86FC;
+            border-left: 5px solid #3a7bd5;
             font-size: 16px;
-            color: #e0e0e0;
+            color: #333333;
             margin-top: 1.5rem;
             word-wrap: break-word;
         }
 
         /* Error Styling */
         .error {
-            color: #cf6679;
+            color: #d9534f;
             font-size: 16px;
             font-weight: bold;
             margin-top: 1rem;
