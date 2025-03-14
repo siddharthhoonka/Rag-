@@ -14,32 +14,32 @@ from tempfile import NamedTemporaryFile
 # Set wide layout for full screen usage
 st.set_page_config(page_title="RAG-based Document Query System", layout="wide")
 
-# Updated Custom CSS for a dark theme with modern styling and smooth animations
+# Updated Custom CSS for a light theme with modern styling and smooth animations
 st.markdown("""
     <style>
         /* Import Google Fonts */
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
 
-        /* Global styles for dark theme */
+        /* Global styles for light theme */
         body {
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            background: #f4f4f4;
             font-family: 'Montserrat', sans-serif;
-            color: #f8f8f2;
+            color: #333;
         }
 
         /* Main container styling */
         .stApp {
-            background-color: rgba(40, 42, 54, 0.9);
+            background-color: #fff;
             padding: 2rem;
             border-radius: 16px;
-            box-shadow: 0px 6px 18px rgba(0,0,0,0.3);
+            box-shadow: 0px 6px 18px rgba(0,0,0,0.1);
             margin-top: 2rem;
             width: 100%;
         }
 
         /* Title Styling */
         .title {
-            color: #ff79c6;
+            color: #007BFF;
             font-weight: 700;
             text-align: center;
             font-size: 3rem;
@@ -48,22 +48,22 @@ st.markdown("""
 
         /* File uploader area styling */
         .css-1d391kg, .css-1cpxqw2, .stFileUploader {
-            background-color: #282a36;
-            border: 2px dashed #ff79c6;
+            background-color: #e9ecef;
+            border: 2px dashed #007BFF;
             border-radius: 12px;
             padding: 2rem;
             text-align: center;
             transition: background 0.3s ease, transform 0.3s ease;
         }
         .css-1d391kg:hover, .css-1cpxqw2:hover, .stFileUploader:hover {
-            background-color: #44475a;
+            background-color: #dee2e6;
             transform: scale(1.02);
         }
 
         /* Button Styling */
         button {
-            background-color: #ff79c6;
-            color: #282a36;
+            background-color: #007BFF;
+            color: #fff;
             font-weight: 600;
             border-radius: 10px;
             padding: 14px 28px;
@@ -74,37 +74,43 @@ st.markdown("""
             margin-top: 1rem;
         }
         button:hover {
-            background-color: #ff92d0;
+            background-color: #0056b3;
             transform: translateY(-2px);
         }
 
-        /* Text Input Styling */
+        /* Text Input Styling for Query Box */
         input[type="text"], input, textarea {
-            background-color: #44475a !important;
-            border: 1px solid #6272a4;
-            color: #f8f8f2 !important;
+            background-color: #fff !important;
+            border: 1px solid #ced4da;
+            color: #333 !important;
             padding: 0.75rem;
             border-radius: 8px;
             width: 100%;
             margin-top: 1rem;
             font-size: 1rem;
+            transition: border 0.3s ease, box-shadow 0.3s ease;
+        }
+        input[type="text"]:focus, input:focus, textarea:focus {
+            border: 1px solid #007BFF;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+            outline: none;
         }
 
         /* Response Styling */
         .response-box {
-            background-color: #44475a;
+            background-color: #e9ecef;
             padding: 1rem;
             border-radius: 8px;
-            border-left: 5px solid #ff79c6;
+            border-left: 5px solid #007BFF;
             font-size: 16px;
-            color: #f8f8f2;
+            color: #333;
             margin-top: 1.5rem;
             word-wrap: break-word;
         }
 
         /* Error Styling */
         .error {
-            color: #ff5555;
+            color: #dc3545;
             font-size: 16px;
             font-weight: bold;
             margin-top: 1rem;
