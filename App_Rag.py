@@ -11,6 +11,9 @@ from langchain_core.prompts import ChatPromptTemplate
 from docx import Document
 from tempfile import NamedTemporaryFile
 
+# Set wide layout for full screen usage
+st.set_page_config(page_title="RAG-based Document Query System", layout="wide")
+
 os.environ["GROQ_API_KEY"] = "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"
 
 # Custom CSS for enhanced dark theme styling with smooth animations and custom fonts
@@ -24,15 +27,14 @@ st.markdown("""
             font-family: 'Roboto', sans-serif;
             color: #e0e0e0;
         }
+        /* Main container styling adjusted for full screen */
         .stApp {
             background-color: #1e1e1e;
             padding: 2rem;
             border-radius: 16px;
             box-shadow: 0px 6px 18px rgba(0,0,0,0.7);
             margin-top: 2rem;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
+            width: 100%;
         }
         /* Title Styling */
         .title {
