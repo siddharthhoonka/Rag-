@@ -13,20 +13,23 @@ from tempfile import NamedTemporaryFile
 
 os.environ["GROQ_API_KEY"] = "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"
 
-# Custom CSS for dark theme styling
+# Custom CSS for enhanced dark theme styling with smooth animations and custom fonts
 st.markdown("""
     <style>
-        /* Overall Background */
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+        /* Overall Body & Background */
         body {
-            background-color: #121212;
+            background: linear-gradient(135deg, #121212, #1e1e1e);
+            font-family: 'Roboto', sans-serif;
             color: #e0e0e0;
         }
         .stApp {
             background-color: #1e1e1e;
             padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0px 4px 12px rgba(0,0,0,0.5);
-            margin-top: 1rem;
+            border-radius: 16px;
+            box-shadow: 0px 6px 18px rgba(0,0,0,0.7);
+            margin-top: 2rem;
             max-width: 800px;
             margin-left: auto;
             margin-right: auto;
@@ -34,38 +37,52 @@ st.markdown("""
         /* Title Styling */
         .title {
             color: #BB86FC;
-            font-weight: bold;
+            font-weight: 700;
             text-align: center;
-            font-size: 2.8rem;
-            margin-bottom: 1.5rem;
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
         /* Upload Area Styling */
         .upload-area {
             border: 2px dashed #BB86FC !important;
-            padding: 1.5rem;
+            padding: 2rem;
             border-radius: 12px;
             background-color: #2c2c2c;
             text-align: center;
-            transition: background 0.3s ease;
+            transition: background 0.3s ease, transform 0.3s ease;
         }
         .upload-area:hover {
             background-color: #3a3a3a;
+            transform: scale(1.02);
         }
         /* Button Styling */
         .button {
             background-color: #BB86FC !important;
             color: #121212 !important;
-            font-weight: bold !important;
-            border-radius: 8px !important;
-            padding: 12px 24px !important;
+            font-weight: 600 !important;
+            border-radius: 10px !important;
+            padding: 14px 28px !important;
             border: none !important;
             cursor: pointer !important;
-            transition: background 0.3s ease !important;
+            transition: background 0.3s ease, transform 0.3s ease;
             margin-top: 1rem;
             width: 100%;
         }
         .button:hover {
             background-color: #9b67d2 !important;
+            transform: translateY(-2px);
+        }
+        /* Text Input Styling */
+        input[type="text"] {
+            background-color: #2c2c2c;
+            border: 1px solid #444;
+            color: #e0e0e0;
+            padding: 0.75rem;
+            border-radius: 8px;
+            width: 100%;
+            margin-top: 1rem;
+            font-size: 1rem;
         }
         /* Response Styling */
         .response-box {
