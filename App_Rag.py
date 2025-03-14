@@ -11,53 +11,50 @@ from langchain_core.prompts import ChatPromptTemplate
 from docx import Document
 from tempfile import NamedTemporaryFile
 
-os.environ["GROQ_API_KEY"] = "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"  
+os.environ["GROQ_API_KEY"] = "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"
 
-# Custom CSS for styling
+# Custom CSS for dark theme styling
 st.markdown("""
     <style>
-        /* Background and Container Styling */
-        .main {
-            background-color: #f4f4f9;
-            padding: 2rem;
+        /* Overall Background */
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
         }
         .stApp {
-            background-color: #ffffff;
+            background-color: #1e1e1e;
             padding: 2rem;
             border-radius: 12px;
-            box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0px 4px 12px rgba(0,0,0,0.5);
             margin-top: 1rem;
             max-width: 800px;
             margin-left: auto;
             margin-right: auto;
         }
-
         /* Title Styling */
         .title {
-            color: #1f77b4;
+            color: #BB86FC;
             font-weight: bold;
             text-align: center;
-            font-size: 2.5rem;
+            font-size: 2.8rem;
             margin-bottom: 1.5rem;
         }
-
         /* Upload Area Styling */
         .upload-area {
-            border: 2px dashed #1f77b4 !important;
+            border: 2px dashed #BB86FC !important;
             padding: 1.5rem;
             border-radius: 12px;
-            background-color: #fafafa;
+            background-color: #2c2c2c;
             text-align: center;
             transition: background 0.3s ease;
         }
         .upload-area:hover {
-            background-color: #e6f4ff;
+            background-color: #3a3a3a;
         }
-
         /* Button Styling */
         .button {
-            background-color: #1f77b4 !important;
-            color: white !important;
+            background-color: #BB86FC !important;
+            color: #121212 !important;
             font-weight: bold !important;
             border-radius: 8px !important;
             padding: 12px 24px !important;
@@ -68,24 +65,22 @@ st.markdown("""
             width: 100%;
         }
         .button:hover {
-            background-color: #175d92 !important;
+            background-color: #9b67d2 !important;
         }
-
         /* Response Styling */
         .response-box {
-            background-color: #eef6ff;
+            background-color: #2c2c2c;
             padding: 1rem;
             border-radius: 8px;
-            border-left: 5px solid #1f77b4;
+            border-left: 5px solid #BB86FC;
             font-size: 16px;
-            color: #333333;
+            color: #e0e0e0;
             margin-top: 1.5rem;
             word-wrap: break-word;
         }
-
         /* Error Styling */
         .error {
-            color: red;
+            color: #cf6679;
             font-size: 16px;
             font-weight: bold;
             margin-top: 1rem;
@@ -152,11 +147,11 @@ if uploaded_file and query:
     with NamedTemporaryFile(delete=False, suffix=".pdf" if uploaded_file.name.endswith(".pdf") else ".docx") as temp_file:
         temp_file.write(uploaded_file.read())
         temp_file_path = temp_file.name
-    
+
     st.write("⏳ **Processing document... Please wait.**")
     with st.spinner("Extracting and analyzing text..."):
         document_text = load_document(temp_file_path)
-    
+
     if document_text:
         with st.spinner("Generating response..."):
             db = process_text(document_text)
