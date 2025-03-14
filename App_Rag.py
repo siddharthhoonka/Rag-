@@ -14,20 +14,23 @@ from tempfile import NamedTemporaryFile
 # Set wide layout for full screen usage
 st.set_page_config(page_title="RAG-based Document Query System", layout="wide")
 
+# Set the Groq API key
 os.environ["GROQ_API_KEY"] = "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"
 
 # Custom CSS for enhanced dark theme styling with smooth animations and custom fonts
 st.markdown("""
     <style>
+        /* Import Google Fonts */
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
-        /* Overall Body & Background */
+        /* Global styles */
         body {
             background: linear-gradient(135deg, #121212, #1e1e1e);
             font-family: 'Roboto', sans-serif;
             color: #e0e0e0;
         }
-        /* Main container styling adjusted for full screen */
+
+        /* Main container styling */
         .stApp {
             background-color: #1e1e1e;
             padding: 2rem;
@@ -36,6 +39,7 @@ st.markdown("""
             margin-top: 2rem;
             width: 100%;
         }
+
         /* Title Styling */
         .title {
             color: #BB86FC;
@@ -45,47 +49,51 @@ st.markdown("""
             margin-bottom: 2rem;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
-        /* Upload Area Styling */
-        .upload-area {
-            border: 2px dashed #BB86FC !important;
-            padding: 2rem;
-            border-radius: 12px;
+
+        /* File uploader area styling */
+        .css-1d391kg, .css-1cpxqw2, .stFileUploader {
             background-color: #2c2c2c;
+            border: 2px dashed #BB86FC;
+            border-radius: 12px;
+            padding: 2rem;
             text-align: center;
             transition: background 0.3s ease, transform 0.3s ease;
         }
-        .upload-area:hover {
+        .css-1d391kg:hover, .css-1cpxqw2:hover, .stFileUploader:hover {
             background-color: #3a3a3a;
             transform: scale(1.02);
         }
+
         /* Button Styling */
-        .button {
-            background-color: #BB86FC !important;
-            color: #121212 !important;
-            font-weight: 600 !important;
-            border-radius: 10px !important;
-            padding: 14px 28px !important;
-            border: none !important;
-            cursor: pointer !important;
+        button {
+            background-color: #BB86FC;
+            color: #121212;
+            font-weight: 600;
+            border-radius: 10px;
+            padding: 14px 28px;
+            border: none;
+            cursor: pointer;
             transition: background 0.3s ease, transform 0.3s ease;
-            margin-top: 1rem;
             width: 100%;
+            margin-top: 1rem;
         }
-        .button:hover {
-            background-color: #9b67d2 !important;
+        button:hover {
+            background-color: #9b67d2;
             transform: translateY(-2px);
         }
+
         /* Text Input Styling */
-        input[type="text"] {
-            background-color: #2c2c2c;
+        input[type="text"], input, textarea {
+            background-color: #2c2c2c !important;
             border: 1px solid #444;
-            color: #e0e0e0;
+            color: #e0e0e0 !important;
             padding: 0.75rem;
             border-radius: 8px;
             width: 100%;
             margin-top: 1rem;
             font-size: 1rem;
         }
+
         /* Response Styling */
         .response-box {
             background-color: #2c2c2c;
@@ -97,6 +105,7 @@ st.markdown("""
             margin-top: 1.5rem;
             word-wrap: break-word;
         }
+
         /* Error Styling */
         .error {
             color: #cf6679;
@@ -159,11 +168,12 @@ def generate_response(db, query):
 st.markdown('<h1 class="title">📄 RAG-based Document Query System</h1>', unsafe_allow_html=True)
 
 uploaded_file = st.file_uploader("**Upload a PDF or DOCX document**", type=["pdf", "docx"])
-
 query = st.text_input("**Enter your query:**")
 
 if uploaded_file and query:
-    with NamedTemporaryFile(delete=False, suffix=".pdf" if uploaded_file.name.endswith(".pdf") else ".docx") as temp_file:
+    # Determine file extension and create a temporary file accordingly
+    file_extension = ".pdf" if uploaded_file.name.endswith(".pdf") else ".docx"
+    with NamedTemporaryFile(delete=False, suffix=file_extension) as temp_file:
         temp_file.write(uploaded_file.read())
         temp_file_path = temp_file.name
 
