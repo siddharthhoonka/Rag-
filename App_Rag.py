@@ -10,73 +10,80 @@ from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
 from docx import Document
 from tempfile import NamedTemporaryFile
+from dotenv import load_dotenv
 
-# Set API key
-os.environ["GROQ_API_KEY"] = "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"  # Replace with your actual key
+# Load environment variables
+load_dotenv()
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+
+if not GROQ_API_KEY:
+    st.error("GROQ API key is missing. Please set it in the environment.")
+    st.stop()
 
 def ocr_pdf(file_path):
-    """Extracts text using OCR from image-based PDFs."""
-    images = convert_from_path(file_path)
-    text = "\n".join([pytesseract.image_to_string(img) for img in images])
-    return text.strip() if text.strip() else None
+    try:
+        images = convert_from_path(file_path)
+        text = "\n".join([pytesseract.image_to_string(img) for img in images])
+        return text.strip() if text.strip() else None
+    except Exception as e:
+        st.error(f"Error during OCR: {e}")
+        return None
 
 def load_document(file_path):
-    """Loads text from a PDF or DOCX file."""
-    if file_path.endswith(".pdf"):
-        try:
+    try:
+        if file_path.endswith(".pdf"):
             doc_loader = PyPDFLoader(file_path)
             pages = doc_loader.load()
             extracted_text = "\n".join([page.page_content for page in pages])
-            
-            # If extracted text is empty, fallback to OCR
             if not extracted_text.strip():
                 extracted_text = ocr_pdf(file_path)
-
             return extracted_text if extracted_text else None
-        except Exception:
-            return None
 
-    elif file_path.endswith(".docx"):
-        doc = Document(file_path)
-        return "\n".join([para.text for para in doc.paragraphs])
-    
-    return None
+        elif file_path.endswith(".docx"):
+            doc = Document(file_path)
+            return "\n".join([para.text for para in doc.paragraphs])
+    except Exception as e:
+        st.error(f"Failed to load document: {e}")
+        return None
 
 def process_text(text):
-    """Splits text into chunks and creates embeddings."""
-    text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=500, chunk_overlap=50, length_function=len, is_separator_regex=False
-    )
-    chunks = text_splitter.create_documents([text])
-    
-    # Embeddings
-    model_name = "BAAI/bge-small-en"
-    embeddings = HuggingFaceBgeEmbeddings(model_name=model_name)
-    
-    chunk_texts = [chunk.page_content for chunk in chunks]
-    embedding_vectors = embeddings.embed_documents(chunk_texts)
-    
-    db = FAISS.from_texts(chunk_texts, embeddings)
-    return db
+    try:
+        text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=500, chunk_overlap=50, length_function=len, is_separator_regex=False
+        )
+        chunks = text_splitter.create_documents([text])
+        
+        # Embeddings
+        model_name = "BAAI/bge-small-en"
+        embeddings = HuggingFaceBgeEmbeddings(model_name=model_name)
+        
+        chunk_texts = [chunk.page_content for chunk in chunks]
+        db = FAISS.from_texts(chunk_texts, embeddings)
+        return db
+    except Exception as e:
+        st.error(f"Error during text processing: {e}")
+        return None
 
 def generate_response(db, query):
-    """Retrieves relevant chunks and generates response using Groq API."""
-    contexts = db.similarity_search(query, k=5)
-    
-    # Construct prompt
-    prompt = ChatPromptTemplate.from_messages([
-        ("system", "You are an expert at answering questions based on the extracted document context: {context}"),
-        ("human", "{question}"),
-    ])
-    
-    model = ChatGroq(model_name="llama3-8b-8192")
-    chain = prompt | model
-    
-    response = chain.invoke({
-        "context": "\n\n".join([c.page_content for c in contexts]),
-        "question": query
-    })
-    return response.content
+    try:
+        contexts = db.similarity_search(query, k=5)
+        
+        prompt = ChatPromptTemplate.from_messages([
+            ("system", "You are an expert at answering questions based on the extracted document context: {context}"),
+            ("human", "{question}"),
+        ])
+        
+        model = ChatGroq(model_name="llama3-8b-8192")
+        chain = prompt | model
+        
+        response = chain.invoke({
+            "context": "\n\n".join([c.page_content for c in contexts]),
+            "question": query
+        })
+        return response.content
+    except Exception as e:
+        st.error(f"Error generating response: {e}")
+        return None
 
 # Streamlit UI
 st.title("RAG-based Document Query System")
@@ -87,14 +94,26 @@ query = st.text_input("Enter your query:")
 if uploaded_file and query:
     with NamedTemporaryFile(delete=False, suffix=".pdf" if uploaded_file.name.endswith(".pdf") else ".docx") as temp_file:
         temp_file.write(uploaded_file.read())
-        temp_file_path = temp_file.name  # Ensure we get the correct temp file path
+        temp_file_path = temp_file.name
     
     document_text = load_document(temp_file_path)
     
     if document_text:
         db = process_text(document_text)
-        response = generate_response(db, query)
-        st.subheader("Response:")
-        st.write(response)
+        if db:
+            response = generate_response(db, query)
+            if response:
+                st.subheader("Response:")
+                st.write(response)
+            else:
+                st.error("Failed to generate response.")
+        else:
+            st.error("Failed to process text.")
     else:
         st.error("Could not extract text. The PDF may contain scanned images or unsupported formats.")
+
+# Clean up temp file
+try:
+    os.remove(temp_file_path)
+except Exception as e:
+    st.warning(f"Failed to delete temp file: {e}")
