@@ -1,0 +1,11 @@
+streamlit
+pytesseract
+langchain
+langchain-community
+pypdf
+pdf2image
+sentence_transformers
+faiss-cpu
+langchain-groq
+huggingface-hub
+python-docx
