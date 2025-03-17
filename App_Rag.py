@@ -11,112 +11,8 @@ from langchain_core.prompts import ChatPromptTemplate
 from docx import Document
 from tempfile import NamedTemporaryFile
 
-# Set wide layout for full screen usage
-st.set_page_config(page_title="RAG-based Document Query System", layout="wide")
-
-# Updated Custom CSS for a light theme with modern styling and smooth animations
-st.markdown("""
-    <style>
-        /* Import Google Fonts */
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
-
-        /* Global styles for light theme */
-        body {
-            background: #f4f4f4;
-            font-family: 'Montserrat', sans-serif;
-            color: #333;
-        }
-
-        /* Main container styling */
-        .stApp {
-            background-color: #fff;
-            padding: 2rem;
-            border-radius: 16px;
-            box-shadow: 0px 6px 18px rgba(0,0,0,0.1);
-            margin-top: 2rem;
-            width: 100%;
-        }
-
-        /* Title Styling */
-        .title {
-            color: #007BFF;
-            font-weight: 700;
-            text-align: center;
-            font-size: 3rem;
-            margin-bottom: 2rem;
-        }
-
-        /* File uploader area styling */
-        .css-1d391kg, .css-1cpxqw2, .stFileUploader {
-            background-color: #e9ecef;
-            border: 2px dashed #007BFF;
-            border-radius: 12px;
-            padding: 2rem;
-            text-align: center;
-            transition: background 0.3s ease, transform 0.3s ease;
-        }
-        .css-1d391kg:hover, .css-1cpxqw2:hover, .stFileUploader:hover {
-            background-color: #dee2e6;
-            transform: scale(1.02);
-        }
-
-        /* Button Styling */
-        button {
-            background-color: #007BFF;
-            color: #fff;
-            font-weight: 600;
-            border-radius: 10px;
-            padding: 14px 28px;
-            border: none;
-            cursor: pointer;
-            transition: background 0.3s ease, transform 0.3s ease;
-            width: 100%;
-            margin-top: 1rem;
-        }
-        button:hover {
-            background-color: #0056b3;
-            transform: translateY(-2px);
-        }
-
-        /* Text Input Styling for Query Box */
-        input[type="text"], input, textarea {
-            background-color: #fff !important;
-            border: 1px solid #ced4da;
-            color: #333 !important;
-            padding: 0.75rem;
-            border-radius: 8px;
-            width: 100%;
-            margin-top: 1rem;
-            font-size: 1rem;
-            transition: border 0.3s ease, box-shadow 0.3s ease;
-        }
-        input[type="text"]:focus, input:focus, textarea:focus {
-            border: 1px solid #007BFF;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-            outline: none;
-        }
-
-        /* Response Styling */
-        .response-box {
-            background-color: #e9ecef;
-            padding: 1rem;
-            border-radius: 8px;
-            border-left: 5px solid #007BFF;
-            font-size: 16px;
-            color: #333;
-            margin-top: 1.5rem;
-            word-wrap: break-word;
-        }
-
-        /* Error Styling */
-        .error {
-            color: #dc3545;
-            font-size: 16px;
-            font-weight: bold;
-            margin-top: 1rem;
-        }
-    </style>
-""", unsafe_allow_html=True)
+# Set Streamlit page configuration
+st.set_page_config(page_title="Document Query System", layout="wide")
 
 # Function to extract text from scanned PDFs using OCR
 def ocr_pdf(file_path):
@@ -143,9 +39,7 @@ def load_document(file_path):
 
 # Function to split and embed text using Langchain
 def process_text(text):
-    text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=500, chunk_overlap=50, length_function=len, is_separator_regex=False
-    )
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
     chunks = text_splitter.create_documents([text])
     embeddings = HuggingFaceBgeEmbeddings(model_name="BAAI/bge-small-en")
     db = FAISS.from_texts([chunk.page_content for chunk in chunks], embeddings)
@@ -167,19 +61,18 @@ def generate_response(db, query):
     return response.content
 
 # Streamlit UI
-st.markdown('<h1 class="title">📄 RAG-based Document Query System</h1>', unsafe_allow_html=True)
+st.title("📄 Document Query System")
 
-uploaded_file = st.file_uploader("**Upload a PDF or DOCX document**", type=["pdf", "docx"])
-query = st.text_input("**Enter your query:**")
+uploaded_file = st.file_uploader("Upload a PDF or DOCX document", type=["pdf", "docx"])
+query = st.text_input("Enter your query:")
 
 if uploaded_file and query:
-    # Determine file extension and create a temporary file accordingly
     file_extension = ".pdf" if uploaded_file.name.endswith(".pdf") else ".docx"
     with NamedTemporaryFile(delete=False, suffix=file_extension) as temp_file:
         temp_file.write(uploaded_file.read())
         temp_file_path = temp_file.name
 
-    st.write("⏳ **Processing document... Please wait.**")
+    st.write("⏳ Processing document...")
     with st.spinner("Extracting and analyzing text..."):
         document_text = load_document(temp_file_path)
 
@@ -187,6 +80,7 @@ if uploaded_file and query:
         with st.spinner("Generating response..."):
             db = process_text(document_text)
             response = generate_response(db, query)
-            st.markdown(f'<div class="response-box">✅ <b>Response:</b><br>{response}</div>', unsafe_allow_html=True)
+            st.success("Response Generated")
+            st.write(response)
     else:
-        st.markdown('<p class="error">❌ Could not extract text. The file may be scanned or unsupported.</p>', unsafe_allow_html=True)
+        st.error("Could not extract text. The file may be scanned or unsupported.")
